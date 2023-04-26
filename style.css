@@ -8,6 +8,7 @@ body {
   width: 660px;
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   align-items: center;
 }
 
@@ -16,6 +17,19 @@ body {
   height: 40px;
   margin: 2px;
   font-size: 14px;
+  transition: .3s;
+}
+
+.key:hover {
+  background-color: #cfd0d2;
+}
+
+.key:active {
+  background-color: #999999;
+}
+
+.active {
+  background-color: #999999;
 }
 
 .special-key {
@@ -23,5 +37,5 @@ body {
 }
 
 .whitespace {
-  width: 304px;
+  width: 348px;
 }
