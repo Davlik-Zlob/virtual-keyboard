@@ -1,4 +1,9 @@
 const body = document.querySelector('body');
+
+const textInput = document.createElement('textarea');
+textInput.classList.add('text-input');
+body.appendChild(textInput);
+
 const keyboard = document.createElement('div');
 keyboard.classList.add('keyboard');
 body.appendChild(keyboard);
@@ -97,7 +102,26 @@ function addActiveClassToKey(event) {
     }
   });
 }
+
+function handleInput(event) {
+  if (event.type === 'keydown') {
+    if (event.key === 'Enter') {
+      textInput.value += '\n';
+    } else {
+      textInput.value += event.key;
+    }
+  } else if (event.type === 'click') {
+    const key = event.target.getAttribute('data-value');
+    if (key === 'Enter') {
+      textInput.value += '\n';
+    } else {
+      textInput.value += key;
+    }
+  }
+}
+
 window.addEventListener('keydown', addActiveClassToKey);
+window.addEventListener('keydown', handleInput);
 
 function handleKeyboardEvent(event) {
   const virtualKeys = document.querySelectorAll('.key');
@@ -114,10 +138,7 @@ function handleKeyboardEvent(event) {
     }
   });
 }
-function delayedKeyboardEventHandler(event) {
-  setTimeout(handleKeyboardEvent(event), 300);
-}
-window.addEventListener('keydown', delayedKeyboardEventHandler);
+window.addEventListener('keyup', handleKeyboardEvent);
 
 // window.addEventListener('keydown', function(event) {
 //   console.log(event.code);
