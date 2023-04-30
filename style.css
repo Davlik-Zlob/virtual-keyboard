@@ -22,7 +22,7 @@ body {
   align-items: center;
 }
 
-.key {
+.keyboard > * {
   width: 40px;
   height: 40px;
   margin: 2px;
@@ -42,10 +42,10 @@ body {
   background-color: #999999;
 }
 
-.special-key {
+.key-special {
   width: 84px;
 }
 
-.whitespace {
+.space {
   width: 348px;
 }
