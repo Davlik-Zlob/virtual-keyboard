@@ -244,6 +244,16 @@ function removeActiveClassToKey(event) {
 window.addEventListener('keydown', addActiveClassToKey);
 window.addEventListener('keyup', removeActiveClassToKey);
 
+function saveLanguage() {
+  localStorage.setItem('language', isRussianLayout ? 'ru' : 'en');
+}
+window.addEventListener('beforeunload', saveLanguage);
+const savedLanguage = localStorage.getItem('language');
+if (savedLanguage) {
+  isRussianLayout = savedLanguage === 'ru';
+  updateKeysLanguage();
+}
+
 // function handleInput(event) {
 //   if (event.type === 'keydown') {
 //     if (event.key === 'Enter') {
