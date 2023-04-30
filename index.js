@@ -8,6 +8,13 @@ const keyboard = document.createElement('div');
 keyboard.classList.add('keyboard');
 body.appendChild(keyboard);
 
+const lang = document.createElement('p');
+lang.classList.add('lang');
+lang.textContent = 'Switch language: Shift + Ctrl';
+body.appendChild(lang);
+
+let isRussianLayout = false;
+
 const engKeys = [
   '`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace',
   'Tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\', 'Del',
@@ -38,13 +45,13 @@ const engKeys = [
 //   'Ctrl', 'Alt', '&nbsp;', 'Alt', '←', '↓', '→', 'Ctrl',
 // ];
 
-// const ruKeys = [
-//   'ё', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace',
-//   'Tab', 'й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ', '\\', 'Del',
-//   'CapsLock', 'ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э', 'Enter',
-//   'Shift', 'я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю', '.', '↑', 'Shift',
-//   'Ctrl', 'Alt', '&nbsp;', 'Alt', '←', '↓', '→', 'Ctrl',
-// ];
+const ruKeys = [
+  'ё', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace',
+  'Tab', 'й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ', '\\', 'Del',
+  'CapsLock', 'ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э', 'Enter',
+  'Shift', 'я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю', '.', '↑', 'Shift',
+  'Ctrl', 'Alt', '&nbsp;', 'Alt', '←', '↓', '→', 'Ctrl',
+];
 // const ruKeysShift = [
 //   'Ё', '!', '"', '№', ';', '%', ':', '?', '*', '(', ')', '_', '+', 'Backspace',
 //   'Tab', 'Й', 'Ц', 'У', 'К', 'Е', 'Н', 'Г', 'Ш', 'Щ', 'З', 'Х', 'Ъ', '/', 'Del',
@@ -199,6 +206,15 @@ for (let i = 0; i < engKeys.length; i += 1) {
   keyboard.appendChild(key);
 }
 
+function updateKeysLanguage() {
+  const virtualKeys = document.querySelectorAll('button');
+  const keys = isRussianLayout ? ruKeys : engKeys;
+  virtualKeys.forEach((button, index) => {
+    const newButton = button;
+    newButton.innerHTML = keys[index];
+  });
+}
+
 function addActiveClassToKey(event) {
   const virtualKeys = document.querySelectorAll('button');
   virtualKeys.forEach((button) => {
@@ -206,6 +222,10 @@ function addActiveClassToKey(event) {
         || button.classList.contains(event.code.toLowerCase())
         || (button.innerHTML === event.key && event.key !== 'Shift' && event.key !== 'Alt')) {
       button.classList.add('active');
+    }
+    if (event.ctrlKey && event.shiftKey) {
+      isRussianLayout = !isRussianLayout;
+      updateKeysLanguage();
     }
   });
 }
@@ -221,26 +241,27 @@ function removeActiveClassToKey(event) {
   });
 }
 
-function handleInput(event) {
-  if (event.type === 'keydown') {
-    if (event.key === 'Enter') {
-      textInput.value += '\n';
-    } else {
-      textInput.value += event.key;
-    }
-  } else if (event.type === 'click') {
-    const key = event.target.getAttribute('data-value');
-    if (key === 'Enter') {
-      textInput.value += '\n';
-    } else {
-      textInput.value += key;
-    }
-  }
-}
-
 window.addEventListener('keydown', addActiveClassToKey);
-window.addEventListener('keydown', handleInput);
 window.addEventListener('keyup', removeActiveClassToKey);
+
+// function handleInput(event) {
+//   if (event.type === 'keydown') {
+//     if (event.key === 'Enter') {
+//       textInput.value += '\n';
+//     } else {
+//       textInput.value += event.key;
+//     }
+//   } else if (event.type === 'click') {
+//     const key = event.target.getAttribute('data-value');
+//     if (key === 'Enter') {
+//       textInput.value += '\n';
+//     } else {
+//       textInput.value += key;
+//     }
+//   }
+// }
+
+// window.addEventListener('keydown', handleInput);
 
 // window.addEventListener('keydown', function(event) {
 //   console.log(event);
