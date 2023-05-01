@@ -30,11 +30,11 @@ body {
   transition: .3s;
 }
 
-.key:hover {
+.keyboard > *:hover {
   background-color: #cfd0d2;
 }
 
-.key:active {
+.keyboard > *:active {
   background-color: #999999;
 }
 

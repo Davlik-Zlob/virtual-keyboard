@@ -1,8 +1,8 @@
 const body = document.querySelector('body');
 
-const textInput = document.createElement('textarea');
-textInput.classList.add('text-input');
-body.appendChild(textInput);
+const textArea = document.createElement('textarea');
+textArea.classList.add('text-input');
+body.appendChild(textArea);
 
 const keyboard = document.createElement('div');
 keyboard.classList.add('keyboard');
@@ -10,7 +10,7 @@ body.appendChild(keyboard);
 
 const lang = document.createElement('p');
 lang.classList.add('lang');
-lang.textContent = 'Switch language: Shift + Ctrl';
+lang.textContent = 'Switch language: Ctrl + Shift';
 body.appendChild(lang);
 
 let isRussianLayout = false;
@@ -241,7 +241,144 @@ function removeActiveClassToKey(event) {
   });
 }
 
+function keydownInput(event) {
+  const { selectionStart, selectionEnd } = textArea;
+  const start = textArea.value.slice(0, selectionStart);
+  const end = textArea.value.slice(selectionEnd);
+  if (event.key === 'Tab') {
+    event.preventDefault();
+    textArea.value = `${start}\t${end}`;
+  } else if (event.key === ' ') {
+    event.preventDefault();
+    textArea.value = `${start} ${end}`;
+  } else if (event.key.length === 1) {
+    event.preventDefault();
+    textArea.value = start + event.key + end;
+  } else if (event.key === 'ArrowUp') {
+    textArea.value = `${start}↑${end}`;
+  } else if (event.key === 'ArrowLeft') {
+    textArea.value = `${start}←${end}`;
+  } else if (event.key === 'ArrowDown') {
+    textArea.value = `${start}↓${end}`;
+  } else if (event.key === 'ArrowRight') {
+    textArea.value = `${start}→${end}`;
+  } else if (event.key === 'Backspace') {
+    event.preventDefault();
+    if (selectionStart === selectionEnd) {
+      if (selectionStart > 0) {
+        textArea.value = textArea.value.slice(0, selectionStart - 1)
+                         + textArea.value.slice(selectionEnd);
+        textArea.setSelectionRange(selectionStart - 1, selectionStart - 1);
+      }
+    } else {
+      textArea.value = textArea.value.slice(0, selectionStart) + textArea.value.slice(selectionEnd);
+      textArea.setSelectionRange(selectionStart, selectionStart);
+    }
+    textArea.focus();
+    return;
+  } else if (event.key === 'Delete') {
+    event.preventDefault();
+    if (selectionStart === selectionEnd) {
+      if (selectionStart < textArea.value.length) {
+        textArea.value = textArea.value.slice(0, selectionStart)
+                         + textArea.value.slice(selectionEnd + 1);
+      }
+    } else {
+      textArea.value = textArea.value.slice(0, selectionStart) + textArea.value.slice(selectionEnd);
+    }
+    textArea.setSelectionRange(selectionStart, selectionStart);
+    textArea.focus();
+    return;
+  }
+  textArea.setSelectionRange(selectionStart + 1, selectionStart + 1);
+  textArea.focus();
+}
+
+function clickInput() {
+  const keys = document.querySelectorAll('.key');
+  keys.forEach((key) => {
+    const button = key;
+    button.addEventListener('click', () => {
+      const char = button.textContent;
+      const start = textArea.selectionStart;
+      const end = textArea.selectionEnd;
+      const before = textArea.value.substring(0, start);
+      const after = textArea.value.substring(end);
+      textArea.value = before + char + after;
+      textArea.selectionStart = start + 1;
+      textArea.selectionEnd = start + 1;
+      textArea.focus();
+    });
+  });
+}
+clickInput();
+
+function spaceInput() {
+  const space = document.querySelector('.space');
+  space.addEventListener('click', () => {
+    textArea.value += ' ';
+    textArea.focus();
+  });
+}
+spaceInput();
+
+function tabInput() {
+  const tab = document.querySelector('.tab');
+  tab.addEventListener('click', () => {
+    textArea.value += '\t';
+    textArea.focus();
+  });
+}
+tabInput();
+
+function enterInput() {
+  const enter = document.querySelector('.enter');
+  enter.addEventListener('click', () => {
+    textArea.value += '\n';
+    textArea.focus();
+  });
+}
+enterInput();
+
+function backInput() {
+  const back = document.querySelector('.backspace');
+  back.addEventListener('click', () => {
+    const { selectionStart, selectionEnd } = textArea;
+    if (selectionStart === selectionEnd) {
+      if (selectionStart > 0) {
+        textArea.value = textArea.value.slice(0, selectionStart - 1)
+                         + textArea.value.slice(selectionEnd);
+        textArea.setSelectionRange(selectionStart - 1, selectionStart - 1);
+      }
+    } else {
+      textArea.value = textArea.value.slice(0, selectionStart) + textArea.value.slice(selectionEnd);
+      textArea.setSelectionRange(selectionStart, selectionStart);
+    }
+    textArea.focus();
+  });
+}
+backInput();
+
+function delInput() {
+  const del = document.querySelector('.delete');
+  del.addEventListener('click', () => {
+    const { selectionStart, selectionEnd } = textArea;
+    if (selectionStart === selectionEnd) {
+      if (selectionStart < textArea.value.length) {
+        textArea.value = textArea.value.slice(0, selectionStart)
+                         + textArea.value.slice(selectionEnd + 1);
+      }
+    } else {
+      textArea.value = textArea.value.slice(0, selectionStart) + textArea.value.slice(selectionEnd);
+    }
+    textArea.setSelectionRange(selectionStart, selectionStart);
+    textArea.focus();
+  });
+}
+delInput();
+
 window.addEventListener('keydown', addActiveClassToKey);
+window.addEventListener('keydown', keydownInput);
 window.addEventListener('keyup', removeActiveClassToKey);
 
 function saveLanguage() {
@@ -253,25 +390,6 @@ if (savedLanguage) {
   isRussianLayout = savedLanguage === 'ru';
   updateKeysLanguage();
 }
-
-// function handleInput(event) {
-//   if (event.type === 'keydown') {
-//     if (event.key === 'Enter') {
-//       textInput.value += '\n';
-//     } else {
-//       textInput.value += event.key;
-//     }
-//   } else if (event.type === 'click') {
-//     const key = event.target.getAttribute('data-value');
-//     if (key === 'Enter') {
-//       textInput.value += '\n';
-//     } else {
-//       textInput.value += key;
-//     }
-//   }
-// }
-
-// window.addEventListener('keydown', handleInput);
 
 // window.addEventListener('keydown', function(event) {
 //   console.log(event);
